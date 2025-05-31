@@ -1,87 +1,77 @@
 import axios from 'axios';
 
-// Base URL for the API
+// Base URL for your API
 export const BASE_URL = "http://localhost:7001/api";
 
-
-//axios instance
+// Create Axios instance
 const axiosInstance = axios.create({
-    baseURL: BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-    },
+  baseURL: BASE_URL,
 });
 
-
-
-// Utility functions
+// Get token from localStorage
 export const getToken = () => localStorage.getItem("token");
 
-export const getUser = () => {
-    const user = localStorage.getItem("token");
-    return user ? JSON.parse(user) : null;
-};
-
-export const logoutAPI = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/"; // optional: redirect to login
-};
-
-// Generalized API Request
+// Generalized API Request handler
 export const apiRequest = async (endpoint, data = {}, method = "get") => {
-    const token = getToken();
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  const token = getToken();
+  const isFormData = data instanceof FormData;
 
-    try {
-        const response = await axiosInstance.request({
-            url: endpoint,
-            method,
-            data,
-            headers,
-        });
-        return response.data;
-    } catch (error) {
-        console.error("API Error:", error.response?.data || error.message);
-        throw error.response?.data || error;
-    }
+  const headers = {
+    ...(token && { Authorization: `Bearer ${token}` }),
+    // For FormData, do NOT set Content-Type, axios sets it automatically with boundary
+    ...(isFormData ? {} : { "Content-Type": "application/json" }),
+  };
+
+  try {
+    const response = await axiosInstance.request({
+      url: endpoint,
+      method,
+      headers,
+      ...(method === "get" ? { params: data } : { data }),
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("API Error:", error.response?.data || error.message);
+    return error.response?.data || { success: false, message: error.message };
+  }
 };
 
-// Login API
+// Auth APIs
 export const loginAPI = async (payload) => {
-    const data = await apiRequest("/user/login", payload, "post");
-    if (data?.token) {
-        localStorage.setItem("token", data.token);
-    }
-    return data;
+  const data = await apiRequest("/user/login", payload, "post");
+  if (data?.token) {
+    localStorage.setItem("token", data.token);
+  }
+  return data;
 };
 
 export const getUserInfo = async () => {
-    return await apiRequest("/user/getUserInfo", {}, "get")
-}
+  return await apiRequest("/user/getUserInfo", {}, "get");
+};
 
+export const logoutAPI = () => {
+  localStorage.removeItem("token");
+  window.location.href = "/"; // optional redirect
+};
 
-// brand API 
-
+// Brand APIs
 export const getAllBrands = async () => {
-    return await apiRequest("/brand/getAllBrands", {}, "get")
-}
+  return await apiRequest("/brand/getAllBrands", {}, "get");
+};
 
 export const addNewBrand = async (payload) => {
-    return await apiRequest("/brand/create", payload, "post")
-}
+  // payload can be FormData or JSON object
+  return await apiRequest("/brand/create", payload, "post");
+};
 
-export const deleteBrand = async (ID) => {
-    try {
-        return await apiRequest(`/brand/deleteBrand/${ID}`, {}, "delete")
-    } catch (error) {
-        if (error) {
-            throw error
-        }
-    }
+export const updateBrand = async (id, payload) => {
+  // payload can be FormData or JSON object
+  return await apiRequest(`/brand/updateBrand/${id}`, payload, "put");
+};
 
-
-
-}
-
+export const deleteBrand = async (id) => {
+  return await apiRequest(`/brand/deleteBrand/${id}`, {}, "delete");
+};
 
 export default axiosInstance;

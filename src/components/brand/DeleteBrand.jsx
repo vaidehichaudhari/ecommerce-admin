@@ -4,10 +4,10 @@ import Modal from 'react-bootstrap/Modal';
 import { deleteBrand } from '../../API/api';
 
 function DeleteBrand({ show, onHide, brandId, onBrandDelete }) {
-    console.log(brandId)
+   // console.log(brandId)
   const handleDeleteBrand = async () => {
     const response = await deleteBrand(brandId);
-    console.log(response, "In model");
+   // console.log(response, "In model");
     if (response.success) {
     onBrandDelete(true, 'Brand deleted successfully!');
     onHide(); // close modal

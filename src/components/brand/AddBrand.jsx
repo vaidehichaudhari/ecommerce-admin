@@ -5,10 +5,19 @@ import { addNewBrand } from '../../API/api';
 
 function AddBrand(props) {
   const [brandName, setBrandName] = useState('');
+  const [brandImage, setBrandImage] = useState(null);
 
   const handleNewBrand = async () => {
-    const payload = { name: brandName }; // adjust if more fields are required
-    const response = await addNewBrand(payload);
+    if (!brandName || !brandImage) {
+      alert("Please provide both brand name and image.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', brandName);
+    formData.append('brandimage', brandImage);
+
+    const response = await addNewBrand(formData);
     if (response.success) {
       props.onBrandAdded(); // refresh the brand list
       props.onHide(); // close modal
@@ -32,10 +41,16 @@ function AddBrand(props) {
       <Modal.Body>
         <input
           type="text"
-          className="form-control"
+          className="form-control mb-3"
           placeholder="Enter brand name"
           value={brandName}
           onChange={(e) => setBrandName(e.target.value)}
+        />
+        <input
+          type="file"
+          className="form-control"
+          accept="image/*"
+          onChange={(e) => setBrandImage(e.target.files[0])}
         />
       </Modal.Body>
       <Modal.Footer>
