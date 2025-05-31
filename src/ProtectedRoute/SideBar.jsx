@@ -4,14 +4,23 @@ import { FaTasks, FaUser } from "react-icons/fa";
 import { RiLogoutCircleRLine } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
 import {logoutAPI} from '../API/api.js'
-
+import { toast } from "react-toastify";
 const Sidebar = () => {
   const navigate = useNavigate();
 
-  const handleLogout = async() => {
+ const handleLogout = async () => {
+  const confirm = window.confirm("Are you sure you want to logout?");
+  if (confirm) {
     await logoutAPI();
+    toast.success("Logged out successfully!", {
+      autoClose: 5000,       // toast stays for 5 seconds
+      closeOnClick: true,    // allow click to close
+      pauseOnHover: true,    // pause if hovered
+      draggable: true        // can drag the toast
+    });
     navigate("/login");
-  };
+  }
+};
 
   return (
     <div className="bg-light p-3 vh-100" style={{ width: "200px" }}>
