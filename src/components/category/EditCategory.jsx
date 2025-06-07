@@ -1,26 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Button, Modal, Form, Image } from "react-bootstrap";
-import { updateBrand } from "../../API/api";
+import { updateCategory } from "../../API/api";
 
-function EditBrand({ show, onHide, brand, onBrandUpdated }) {
-  const [brandName, setBrandName] = useState("");
+function EditCategory({ show, onHide, category, onCategoryUpdated }) {
+  const [categoryName, setCategoryName] = useState("");
   const [imageFile, setImageFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
-  const [loading, setLoading] = useState(false); // loading state
+  const [loading, setLoading] = useState(false);
 
-  // Set brand data when modal opens
+  // Populate modal with selected category data
   useEffect(() => {
-    if (brand) {
-      setBrandName(brand.name || "");
+    if (category) {
+      setCategoryName(category.name || "");
       setImageFile(null);
-      setPreviewImage(brand.image || null);
+      setPreviewImage(category.image || null);
     }
-  }, [brand]);
+  }, [category]);
 
-  // Reset state when modal closes
+  // Reset fields on close
   useEffect(() => {
     if (!show) {
-      setBrandName("");
+      setCategoryName("");
       setImageFile(null);
       setPreviewImage(null);
       setLoading(false);
@@ -36,51 +36,51 @@ function EditBrand({ show, onHide, brand, onBrandUpdated }) {
   };
 
   const handleUpdate = async () => {
-    if (!brandName.trim()) {
-      onBrandUpdated(false, "Brand name cannot be empty");
+    if (!categoryName.trim()) {
+      onCategoryUpdated(false, "Category name cannot be empty");
       return;
     }
 
     setLoading(true);
 
     const formData = new FormData();
-    formData.append("name", brandName.trim());
+    formData.append("name", categoryName.trim());
 
     if (imageFile) {
-      formData.append("brandimage", imageFile); // Make sure backend accepts this key
+      formData.append("categoryimage", imageFile); // Ensure backend expects "categoryimage"
     }
 
-    const response = await updateBrand(brand.id, formData);
+    const response = await updateCategory(category.id, formData);
     setLoading(false);
 
     if (response.success) {
-      onBrandUpdated(true, "Brand updated successfully");
+      onCategoryUpdated(true, "Category updated successfully");
       onHide();
     } else {
-      onBrandUpdated(false, response.message || "Failed to update brand");
+      onCategoryUpdated(false, response.message || "Failed to update category");
     }
   };
 
   return (
     <Modal show={show} onHide={onHide} centered>
       <Modal.Header closeButton>
-        <Modal.Title>Edit Brand</Modal.Title>
+        <Modal.Title>Edit Category</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Form.Group>
-          <Form.Label htmlFor="brandName">Brand Name</Form.Label>
+          <Form.Label htmlFor="categoryName">Category Name</Form.Label>
           <Form.Control
-            id="brandName"
+            id="categoryName"
             type="text"
-            value={brandName}
-            onChange={(e) => setBrandName(e.target.value)}
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
           />
         </Form.Group>
 
         <Form.Group className="mt-3">
-          <Form.Label htmlFor="brandImage">Change Image (optional)</Form.Label>
+          <Form.Label htmlFor="categoryImage">Change Image (optional)</Form.Label>
           <Form.Control
-            id="brandImage"
+            id="categoryImage"
             type="file"
             onChange={handleImageChange}
             accept="image/*"
@@ -92,7 +92,7 @@ function EditBrand({ show, onHide, brand, onBrandUpdated }) {
             <p>Image Preview:</p>
             <Image
               src={previewImage}
-              alt="Brand preview"
+              alt="Category preview"
               thumbnail
               style={{ maxHeight: "150px" }}
             />
@@ -111,4 +111,4 @@ function EditBrand({ show, onHide, brand, onBrandUpdated }) {
   );
 }
 
-export default EditBrand;
+export default EditCategory;

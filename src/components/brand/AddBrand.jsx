@@ -1,61 +1,82 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
+import Form from 'react-bootstrap/Form';
 import { addNewBrand } from '../../API/api';
 
-function AddBrand(props) {
+function AddBrand({ show, onHide, onBrandAdded }) {
   const [brandName, setBrandName] = useState('');
   const [brandImage, setBrandImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (!show) {
+      // Reset form when modal closes
+      setBrandName('');
+      setBrandImage(null);
+      setLoading(false);
+    }
+  }, [show]);
 
   const handleNewBrand = async () => {
-    if (!brandName || !brandImage) {
-      alert("Please provide both brand name and image.");
+    if (!brandName.trim()) {
+      alert("Please enter a brand name.");
       return;
     }
 
+    if (!brandImage) {
+      alert("Please select a brand image.");
+      return;
+    }
+
+    setLoading(true);
     const formData = new FormData();
-    formData.append('name', brandName);
-    formData.append('brandimage', brandImage);
+    formData.append('name', brandName.trim());
+    formData.append('image', brandImage);
 
     const response = await addNewBrand(formData);
+    setLoading(false);
+
     if (response.success) {
-      props.onBrandAdded(); // refresh the brand list
-      props.onHide(); // close modal
+      onBrandAdded();  // refresh brand list
+      onHide();        // close modal
     } else {
-      alert('Failed to add brand');
+      alert(response.message || 'Failed to add brand.');
     }
   };
 
   return (
-    <Modal
-      {...props}
-      size="lg"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
+    <Modal show={show} onHide={onHide} size="lg" centered>
       <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">
-          Add New Brand
-        </Modal.Title>
+        <Modal.Title>Add New Brand</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <input
-          type="text"
-          className="form-control mb-3"
-          placeholder="Enter brand name"
-          value={brandName}
-          onChange={(e) => setBrandName(e.target.value)}
-        />
-        <input
-          type="file"
-          className="form-control"
-          accept="image/*"
-          onChange={(e) => setBrandImage(e.target.files[0])}
-        />
+        <Form.Group className="mb-3" controlId="brandName">
+          <Form.Label>Brand Name</Form.Label>
+          <Form.Control
+            type="text"
+            placeholder="Enter brand name"
+            value={brandName}
+            onChange={(e) => setBrandName(e.target.value)}
+          />
+        </Form.Group>
+
+        <Form.Group controlId="brandImage">
+          <Form.Label>Brand Image</Form.Label>
+          <Form.Control
+            type="file"
+            accept="image/*"
+            onChange={(e) => setBrandImage(e.target.files[0])}
+          />
+        </Form.Group>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="success" onClick={handleNewBrand}>Create</Button>
-        <Button variant="secondary" onClick={props.onHide}>Close</Button>
+        <Button variant="success" onClick={handleNewBrand} disabled={loading}>
+          {loading ? 'Creating...' : 'Create'}
+        </Button>
+        <Button variant="secondary" onClick={onHide} disabled={loading}>
+          Close
+        </Button>
       </Modal.Footer>
     </Modal>
   );

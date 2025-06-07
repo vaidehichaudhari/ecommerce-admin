@@ -1,49 +1,56 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { FaTasks, FaUser } from "react-icons/fa";
+import { NavLink, useNavigate } from "react-router-dom";
+import { FaTasks, FaTags, FaThList } from "react-icons/fa";
 import { RiLogoutCircleRLine } from "react-icons/ri";
-import { NavLink } from "react-router-dom";
-import {logoutAPI} from '../API/api.js'
 import { toast } from "react-toastify";
+import { logoutAPI } from '../API/api.js';
+
 const Sidebar = () => {
   const navigate = useNavigate();
 
- const handleLogout = async () => {
-  const confirm = window.confirm("Are you sure you want to logout?");
-  if (confirm) {
-    await logoutAPI();
-    toast.success("Logged out successfully!", {
-      autoClose: 5000,       // toast stays for 5 seconds
-      closeOnClick: true,    // allow click to close
-      pauseOnHover: true,    // pause if hovered
-      draggable: true        // can drag the toast
-    });
-    navigate("/login");
-  }
-};
+  const handleLogout = async () => {
+    const confirm = window.confirm("Are you sure you want to logout?");
+    if (confirm) {
+      await logoutAPI();
+      toast.success("Logged out successfully!", {
+        autoClose: 8000,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+      navigate("/login");
+    }
+  };
 
   return (
     <div className="bg-light p-3 vh-100" style={{ width: "200px" }}>
-      {/* <h4 className="mb-4"><img src="{icon}"></img></h4> */}
       <ul className="list-unstyled">
         <li className="mt-4">
-          <NavLink to="/"className={({ isActive }) =>
+          <NavLink
+            to="/"
+            className={({ isActive }) =>
               `nav-link ${isActive ? "text-primary fw-bold" : ""}`
-            }>
+            }
+          >
             Dashboard
           </NavLink>
         </li>
         <li className="mt-4">
-          <NavLink to="/profile"className={({ isActive }) =>
+          <NavLink
+            to="/profile"
+            className={({ isActive }) =>
               `nav-link ${isActive ? "text-primary fw-bold" : ""}`
-            }>
+            }
+          >
             Profile
           </NavLink>
         </li>
-        <hr></hr>
-        <li className="nav-item">
+
+        <hr />
+
+        <li className="nav-item mt-4">
           <NavLink
-            to="/dashboard/product"
+            to="/product"
             className={({ isActive }) =>
               `nav-link ${isActive ? "text-primary fw-bold" : ""}`
             }
@@ -54,29 +61,36 @@ const Sidebar = () => {
         </li>
 
         <li className="mt-4">
-        <NavLink
+          <NavLink
             to="/brand"
             className={({ isActive }) =>
               `nav-link ${isActive ? "text-primary fw-bold" : ""}`
             }
           >
-            <FaUser className="me-2" />
+            <FaTags className="me-2" />
             Brand
           </NavLink>
         </li>
-                <li className="mt-4">
-        <NavLink
-            to="/dashboard/category"
+
+        <li className="mt-4">
+          <NavLink
+            to="/category"
             className={({ isActive }) =>
               `nav-link ${isActive ? "text-primary fw-bold" : ""}`
             }
           >
-            <FaUser className="me-2" />
+            <FaThList className="me-2" />
             Category
           </NavLink>
         </li>
+
         <li className="mt-4">
-          <button onClick={handleLogout} className="nav-link">
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="btn btn-link nav-link text-start"
+            style={{ paddingLeft: 0 }}
+          >
             <RiLogoutCircleRLine className="me-2" />
             Logout
           </button>

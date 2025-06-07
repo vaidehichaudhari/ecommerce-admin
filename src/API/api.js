@@ -74,4 +74,23 @@ export const deleteBrand = async (id) => {
   return await apiRequest(`/brand/deleteBrand/${id}`, {}, "delete");
 };
 
+//  Category APIS
+
+
+export const addNewCategory = async (payload) => {
+  return await apiRequest("/category/create", payload, "post");
+};
+
+export const getAllCategories = async () => {
+  return await apiRequest("/category/getAllCategories", {}, "get");
+};
+
+export const deleteCategory = async (id) => {
+  return await apiRequest(`/category/deleteCategory/${id}`, {}, "delete");
+};
+
+export const updateCategory = async (id, payload) => {
+  return await apiRequest(`/category/updateCategory/${id}`, payload, "put");
+};
+
 export default axiosInstance;

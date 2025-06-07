@@ -12,16 +12,32 @@ const Profile = () => {
   useEffect(() => {
     fetchUser();
   }, []);
-  console.log(loggedUser);
-  return (
-    <div>
-      <h2 className="mb-3">Profile</h2>
-      <p>This is your profile info.</p>
-      {loggedUser && <div>
 
-         <p>{loggedUser.name}</p>
-         <p>{loggedUser.email}</p>
-         </div>}
+  return (
+    <div className="container mt-5">
+      <div className="card shadow p-4">
+        <h2 className="mb-3 text-center"> Admin Profile</h2>
+        
+        {loggedUser ? (
+          <div className="mt-4">
+            <div className="mb-3">
+              <strong>Name:</strong>
+              <p className="form-control bg-light">{loggedUser.name}</p>
+            </div>
+            <div className="mb-3">
+              <strong>Email:</strong>
+              <p className="form-control bg-light">{loggedUser.email}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="text-center mt-4">
+            <div className="spinner-border text-primary" role="status">
+              <span className="visually-hidden">Loading...</span>
+            </div>
+            <p className="mt-2">Fetching user data...</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
