@@ -93,4 +93,23 @@ export const updateCategory = async (id, payload) => {
   return await apiRequest(`/category/updateCategory/${id}`, payload, "put");
 };
 
+//  Product APIS
+
+
+export const getAllProducts = async () => {
+  return await apiRequest('/product/getAllProducts', {}, "get");
+};
+
+export const addNewProduct = async (payload) => {
+  return await apiRequest('/product/create', payload, 'post');
+};
+
+export const deleteProduct = async (ID) => {
+  return await apiRequest(`/product/deleteProduct/${ID}`, {}, "delete");
+};
+
+export const updateProduct = async (ID, payload) => {
+  return await apiRequest(`/product/updateProduct/${ID}`, payload, "put");
+};
+
 export default axiosInstance;
